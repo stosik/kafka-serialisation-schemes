@@ -6,8 +6,8 @@ import org.springframework.scheduling.annotation.EnableScheduling
 
 @SpringBootApplication
 @EnableScheduling
-class TestingApplication
+class ConsumerApplication
 
 fun main(args: Array<String>) {
-    runApplication<TestingApplication>(*args)
+    runApplication<ConsumerApplication>(*args)
 }

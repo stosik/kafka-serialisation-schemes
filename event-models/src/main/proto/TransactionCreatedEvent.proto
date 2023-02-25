@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package pl.stosik;
+
+message TransactionCreatedEvent {
+  string id = 1;
+  string hostPaymentId = 2;
+  string platformPaymentId = 3;
+  string amount = 4;
+  string createdAt = 5;
+}
+
+//message DecimalValue {
+//  uint32 scale = 1;
+//  uint32 precision = 2;
+//  bytes value = 3;
+//}

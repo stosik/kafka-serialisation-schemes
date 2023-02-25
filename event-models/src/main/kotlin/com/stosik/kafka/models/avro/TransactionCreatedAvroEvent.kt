@@ -1,4 +1,4 @@
-package com.stosik.kafka.consumer.avro
+package com.stosik.kafka.models.avro
 
 import com.sksamuel.avro4k.AvroName
 import com.sksamuel.avro4k.AvroNamespace

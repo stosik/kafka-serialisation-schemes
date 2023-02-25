@@ -1,6 +1,7 @@
 package com.stosik.kafka.producer.avro
 
 import com.sksamuel.avro4k.Avro
+import com.stosik.kafka.models.avro.TransactionCreatedAvroEvent
 import com.stosik.kafka.producer.asyncSend
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 import org.apache.avro.generic.GenericRecord
@@ -14,6 +15,10 @@ import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
+import java.math.BigDecimal
+import java.time.LocalDateTime
+import java.time.Month
+import java.util.*
 
 @RestController
 internal class TransactionKafkaAvroController(
@@ -44,5 +49,18 @@ internal class TransactionKafkaAvroController(
     companion object {
 
         private const val TRANSACTION_CREATED_TOPIC = "pl.stosik.avro.transaction.created"
+    }
+}
+
+object TransactionCreatedAvroEventExample {
+
+    fun random(): TransactionCreatedAvroEvent {
+        return TransactionCreatedAvroEvent(
+            id = UUID.randomUUID(),
+            hostPaymentId = UUID.randomUUID(),
+            createdAt = LocalDateTime.of(2022, Month.JANUARY, 1, 0, 0),
+            platformPaymentId = "4a8ee61cdf3e4842b33c56b55df4cc251d233422",
+            amount = BigDecimal.valueOf(12.50),
+        )
     }
 }

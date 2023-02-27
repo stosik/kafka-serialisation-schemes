@@ -38,8 +38,23 @@ internal class TransactionKafkaJsonController(
     @ResponseStatus(CREATED)
     suspend fun createTransactionEvent() {
         val event = TransactionCreatedJsonEventExample.random()
-        val jsonEvent = objectMapper.writeValueAsString(event)
-        kafkaProducer.asyncSend(ProducerRecord(TRANSACTION_CREATED_TOPIC, jsonEvent))
+        val jsonEvent = event.toJson()
+        sendEvent(event.id, jsonEvent)
+    }
+
+    @GetMapping("/json/transactions/spam")
+    @ResponseStatus(CREATED)
+    suspend fun spamEvents() {
+        (0..50)
+            .map { TransactionCreatedJsonEventExample.random() }
+            .associate { it.id to it.toJson() }
+            .forEach { sendEvent(it.key, it.value) }
+    }
+
+    private fun TransactionCreatedJsonEvent.toJson() = objectMapper.writeValueAsString(this)
+
+    private suspend fun sendEvent(id: UUID, event: String) {
+        kafkaProducer.asyncSend(ProducerRecord(TRANSACTION_CREATED_TOPIC, id.toString(), event))
     }
 
     companion object {

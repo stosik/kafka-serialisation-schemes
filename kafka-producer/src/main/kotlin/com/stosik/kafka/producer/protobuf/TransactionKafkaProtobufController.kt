@@ -1,5 +1,6 @@
 package com.stosik.kafka.producer.protobuf
 
+import com.google.protobuf.ByteString
 import com.stosik.kafka.models.protobuf.TransactionCreatedProtobufEvent
 import com.stosik.kafka.producer.asyncSend
 import io.confluent.kafka.serializers.protobuf.KafkaProtobufSerializer
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import pl.stosik.TransactionCreatedEventOuterClass.TransactionCreatedEvent
+import pl.stosik.decimalValue
 import pl.stosik.transactionCreatedEvent
 import java.math.BigDecimal
 import java.time.LocalDateTime
@@ -36,25 +38,39 @@ internal class TransactionKafkaProtobufController(
 
         KafkaProducer<String, TransactionCreatedEvent>(producerProps)
     }
-
-
+    
     @GetMapping("/proto/transactions/created")
     @ResponseStatus(HttpStatus.CREATED)
     suspend fun createTransactionEvent() {
         val event = TransactionCreatedProtobufEventExample.random()
-        val protoEvent = transactionCreatedEvent {
-            id = event.id.toString()
-            hostPaymentId = event.hostPaymentId.toString()
-            platformPaymentId = event.platformPaymentId
-            createdAt = event.createdAt.toString()
-            amount = event.amount.toString()
+        val protoEvent = event.toProto()
+        sendEvent(protoEvent)
+    }
+
+    @GetMapping("/proto/transactions/spam")
+    @ResponseStatus(HttpStatus.CREATED)
+    suspend fun spamEvents() {
+        (0..50)
+            .map { TransactionCreatedProtobufEventExample.random() }
+            .map { it.toProto() }
+            .forEach { sendEvent(it) }
+    }
+
+    private fun TransactionCreatedProtobufEvent.toProto(): TransactionCreatedEvent = transactionCreatedEvent {
+        id = this@toProto.id.toString()
+        hostPaymentId = this@toProto.hostPaymentId.toString()
+        platformPaymentId = this@toProto.platformPaymentId
+        createdAt = this@toProto.createdAt.toString()
+        amount = decimalValue {
+            value = ByteString.copyFrom(this@toProto.amount.unscaledValue().toByteArray())
+            scale = this@toProto.amount.scale()
+            precision = this@toProto.amount.precision()
+
         }
-//                DecimalValue.newBuilder()
-//                    .setValue(ByteString.copyFrom(event.amount.unscaledValue().toByteArray()))
-//                    .setPrecision(event.amount.precision())
-//                    .setScale(event.amount.scale())
-//                    .build()
-        kafkaProducer.asyncSend(ProducerRecord(TRANSACTION_CREATED_TOPIC, protoEvent))
+    }
+
+    private suspend fun sendEvent(event: TransactionCreatedEvent) {
+        kafkaProducer.asyncSend(ProducerRecord(TRANSACTION_CREATED_TOPIC, event))
     }
 
     companion object {

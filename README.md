@@ -53,6 +53,23 @@ kafka-topics --bootstrap-server kafka:9092 \
 --topic pl.stosik.proto.transaction.created
 ```
 
+```shell
+docker exec kafka \                                                                                                                                                   ✔
+kafka-log-dirs --bootstrap-server kafka:9092 \
+--describe \
+--topic-list pl.stosik.json.transaction.created
+
+docker exec kafka \                                                                                                                                                   ✔
+kafka-log-dirs --bootstrap-server kafka:9092 \
+--describe \
+--topic-list pl.stosik.proto.transaction.created
+
+docker exec kafka \                                                                                                                                                   ✔
+kafka-log-dirs --bootstrap-server kafka:9092 \
+--describe \
+--topic-list pl.stosik.avro.transaction.created
+```
+
 This should set the whole infrastructure ready for testing.
 You can check if everything is in place going to:
 

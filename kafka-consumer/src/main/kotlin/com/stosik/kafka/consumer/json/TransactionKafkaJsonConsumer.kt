@@ -14,6 +14,7 @@ import java.time.Duration
 @Component
 internal class TransactionKafkaJsonConsumer(private val objectMapper: ObjectMapper) {
 
+    // TODO Extract to common builder
     private val consumerProps = mapOf(
         BOOTSTRAP_SERVERS_CONFIG to "http://localhost:9092",
         AUTO_OFFSET_RESET_CONFIG to "earliest",

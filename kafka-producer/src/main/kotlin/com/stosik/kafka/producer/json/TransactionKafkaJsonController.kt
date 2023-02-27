@@ -18,10 +18,9 @@ import java.time.Month
 import java.util.*
 
 @RestController
-internal class TransactionKafkaJsonController(
-    private val objectMapper: ObjectMapper,
-) {
+internal class TransactionKafkaJsonController(private val objectMapper: ObjectMapper) {
 
+    // TODO Extract to common builder
     private val kafkaProducer: KafkaProducer<String, String> by lazy {
         val producerProps = mapOf(
             BOOTSTRAP_SERVERS_CONFIG to "http://localhost:9092",

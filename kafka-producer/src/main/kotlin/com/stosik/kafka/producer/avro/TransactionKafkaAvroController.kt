@@ -38,18 +38,6 @@ internal class TransactionKafkaAvroController(
         KafkaProducer<String, GenericRecord>(producerProps)
     }
 
-    private val kafkaProducerSchema: KafkaProducer<String, GenericRecord> by lazy {
-        val producerProps = mapOf(
-            BOOTSTRAP_SERVERS_CONFIG to "http://localhost:9092",
-            KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
-            VALUE_SERIALIZER_CLASS_CONFIG to KafkaAvroSerializer::class.java,
-            SECURITY_PROTOCOL_CONFIG to "PLAINTEXT",
-            "schema.registry.url" to schemaRegistryUrl,
-//            "auto.register.schemas property" to false
-        )
-
-        KafkaProducer<String, GenericRecord>(producerProps)
-    }
 
     @GetMapping("/avro/transactions/created")
     @ResponseStatus(HttpStatus.CREATED)

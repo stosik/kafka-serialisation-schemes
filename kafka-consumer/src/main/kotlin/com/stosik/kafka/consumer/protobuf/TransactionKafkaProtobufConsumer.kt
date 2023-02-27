@@ -1,6 +1,5 @@
 package com.stosik.kafka.consumer.protobuf
 
-import com.stosik.kafka.models.protobuf.TransactionCreatedProtobufEvent
 import io.confluent.kafka.serializers.protobuf.KafkaProtobufDeserializer
 import io.confluent.kafka.serializers.protobuf.KafkaProtobufDeserializerConfig.SPECIFIC_PROTOBUF_VALUE_TYPE
 import org.apache.kafka.clients.admin.AdminClientConfig.SECURITY_PROTOCOL_CONFIG
@@ -12,13 +11,8 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import pl.stosik.TransactionCreatedEventOuterClass.TransactionCreatedEvent
-import java.math.BigDecimal
-import java.math.BigInteger
-import java.math.MathContext
 import java.time.Duration
-import java.time.LocalDateTime
 import java.util.*
-
 
 
 @Component
@@ -45,24 +39,12 @@ internal class TransactionKafkaProtobufConsumer(
     fun consume() {
         val events = consumer
             .poll(Duration.ofSeconds(1))
-            .map { it.value().toProtoEvent() }
+            .map { it.value() }
 
         for (event in events) {
             println("Received Proto event: $event")
         }
     }
-
-    private fun TransactionCreatedEvent.toProtoEvent() = TransactionCreatedProtobufEvent(
-        id = UUID.fromString(this.id),
-        hostPaymentId = UUID.fromString(this.hostPaymentId),
-        platformPaymentId = this.platformPaymentId,
-        createdAt = LocalDateTime.parse(this.createdAt),
-        amount = BigDecimal(
-            BigInteger(this.amount.value.toByteArray()),
-            this.amount.scale,
-            MathContext(this.amount.precision)
-        )
-    )
 
     companion object {
 

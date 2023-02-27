@@ -1,7 +1,5 @@
 package com.stosik.kafka.producer.protobuf
 
-import com.google.protobuf.ByteString
-import com.stosik.kafka.models.protobuf.TransactionCreatedProtobufEvent
 import com.stosik.kafka.producer.asyncSend
 import io.confluent.kafka.serializers.protobuf.KafkaProtobufSerializer
 import org.apache.kafka.clients.admin.AdminClientConfig.SECURITY_PROTOCOL_CONFIG
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 import pl.stosik.TransactionCreatedEventOuterClass.TransactionCreatedEvent
-import pl.stosik.decimalValue
 import pl.stosik.transactionCreatedEvent
 import java.math.BigDecimal
 import java.time.LocalDateTime
@@ -38,13 +35,12 @@ internal class TransactionKafkaProtobufController(
 
         KafkaProducer<String, TransactionCreatedEvent>(producerProps)
     }
-    
+
     @GetMapping("/proto/transactions/created")
     @ResponseStatus(HttpStatus.CREATED)
     suspend fun createTransactionEvent() {
         val event = TransactionCreatedProtobufEventExample.random()
-        val protoEvent = event.toProto()
-        sendEvent(protoEvent)
+        sendEvent(event)
     }
 
     @GetMapping("/proto/transactions/spam")
@@ -52,21 +48,7 @@ internal class TransactionKafkaProtobufController(
     suspend fun spamEvents() {
         (0..50)
             .map { TransactionCreatedProtobufEventExample.random() }
-            .map { it.toProto() }
             .forEach { sendEvent(it) }
-    }
-
-    private fun TransactionCreatedProtobufEvent.toProto(): TransactionCreatedEvent = transactionCreatedEvent {
-        id = this@toProto.id.toString()
-        hostPaymentId = this@toProto.hostPaymentId.toString()
-        platformPaymentId = this@toProto.platformPaymentId
-        createdAt = this@toProto.createdAt.toString()
-        amount = decimalValue {
-            value = ByteString.copyFrom(this@toProto.amount.unscaledValue().toByteArray())
-            scale = this@toProto.amount.scale()
-            precision = this@toProto.amount.precision()
-
-        }
     }
 
     private suspend fun sendEvent(event: TransactionCreatedEvent) {
@@ -81,13 +63,12 @@ internal class TransactionKafkaProtobufController(
 
 object TransactionCreatedProtobufEventExample {
 
-    fun random(): TransactionCreatedProtobufEvent {
-        return TransactionCreatedProtobufEvent(
-            id = UUID.randomUUID(),
-            hostPaymentId = UUID.randomUUID(),
-            createdAt = LocalDateTime.of(2022, Month.JANUARY, 1, 0, 0),
-            platformPaymentId = "4a8ee61cdf3e4842b33c56b55df4cc251d233422",
-            amount = BigDecimal.valueOf(12.50),
-        )
+    fun random() = transactionCreatedEvent {
+        val decimalAmount = BigDecimal.valueOf(12.50)
+        id = UUID.randomUUID().toString()
+        hostPaymentId = UUID.randomUUID().toString()
+        platformPaymentId = "4a8ee61cdf3e4842b33c56b55df4cc251d233422"
+        createdAt = LocalDateTime.of(2022, Month.JANUARY, 1, 0, 0).toString()
+        amount = decimalAmount.toString()
     }
 }

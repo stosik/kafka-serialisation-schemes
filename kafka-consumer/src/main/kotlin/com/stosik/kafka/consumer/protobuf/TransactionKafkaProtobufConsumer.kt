@@ -1,6 +1,7 @@
 package com.stosik.kafka.consumer.protobuf
 
 import io.confluent.kafka.serializers.protobuf.KafkaProtobufDeserializer
+import io.confluent.kafka.serializers.protobuf.KafkaProtobufDeserializerConfig.SPECIFIC_PROTOBUF_VALUE_TYPE
 import org.apache.kafka.clients.admin.AdminClientConfig.SECURITY_PROTOCOL_CONFIG
 import org.apache.kafka.clients.consumer.ConsumerConfig.*
 import org.apache.kafka.clients.consumer.KafkaConsumer
@@ -11,6 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import pl.stosik.TransactionCreatedEventOuterClass.TransactionCreatedEvent
 import java.time.Duration
+
 
 @Component
 internal class TransactionKafkaProtobufConsumer(
@@ -24,6 +26,7 @@ internal class TransactionKafkaProtobufConsumer(
         VALUE_DESERIALIZER_CLASS_CONFIG to KafkaProtobufDeserializer::class.java,
         GROUP_ID_CONFIG to "tms-dashboard-api-proto",
         SECURITY_PROTOCOL_CONFIG to "PLAINTEXT",
+        SPECIFIC_PROTOBUF_VALUE_TYPE to TransactionCreatedEvent::class.java,
         "schema.registry.url" to schemaRegistryUrl
     )
 

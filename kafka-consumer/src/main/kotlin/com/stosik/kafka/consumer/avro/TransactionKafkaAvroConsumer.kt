@@ -1,6 +1,7 @@
 package com.stosik.kafka.consumer.avro
 
 import com.sksamuel.avro4k.Avro
+import com.stosik.kafka.models.avro.TransactionCreatedAvroEvent
 import io.confluent.kafka.serializers.KafkaAvroDeserializer
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.admin.AdminClientConfig.SECURITY_PROTOCOL_CONFIG

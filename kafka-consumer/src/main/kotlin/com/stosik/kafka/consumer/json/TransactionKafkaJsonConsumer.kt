@@ -1,6 +1,7 @@
 package com.stosik.kafka.consumer.json
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.stosik.kafka.models.json.TransactionCreatedJsonEvent
 import org.apache.kafka.clients.admin.AdminClientConfig.SECURITY_PROTOCOL_CONFIG
 import org.apache.kafka.clients.consumer.ConsumerConfig.*
 import org.apache.kafka.clients.consumer.KafkaConsumer

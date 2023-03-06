@@ -2,9 +2,8 @@ package com.stosik.kafka.producer.json
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.stosik.kafka.models.json.TransactionCreatedJsonEvent
-import com.stosik.kafka.producer.asyncSend
-import org.apache.kafka.clients.admin.AdminClientConfig.SECURITY_PROTOCOL_CONFIG
-import org.apache.kafka.clients.producer.KafkaProducer
+import com.stosik.kafka.models.producer.asyncSend
+import com.stosik.kafka.models.producer.kafkaProducer
 import org.apache.kafka.clients.producer.ProducerConfig.*
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.serialization.StringSerializer
@@ -20,17 +19,13 @@ import java.util.*
 @RestController
 internal class TransactionKafkaJsonController(private val objectMapper: ObjectMapper) {
 
-    // TODO Extract to common builder
-    private val kafkaProducer: KafkaProducer<String, String> by lazy {
-        val producerProps = mapOf(
-            BOOTSTRAP_SERVERS_CONFIG to "http://localhost:9092",
-            KEY_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
-            VALUE_SERIALIZER_CLASS_CONFIG to StringSerializer::class.java,
-            "value.serializer.json.mapper" to objectMapper,
-            SECURITY_PROTOCOL_CONFIG to "PLAINTEXT"
-        )
-
-        KafkaProducer<String, String>(producerProps)
+    private val kafkaProducer = kafkaProducer<String, String> {
+        configuration {
+            bootstrapServers = listOf("http://localhost:9092")
+            keyDeserializer = StringSerializer::class.java
+            valueDeserializer = StringSerializer::class.java
+            securityProtocol = "PLAINTEXT"
+        }
     }
 
     @GetMapping("/json/transactions/created")

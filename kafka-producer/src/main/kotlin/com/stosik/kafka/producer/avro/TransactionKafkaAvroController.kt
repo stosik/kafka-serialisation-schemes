@@ -2,7 +2,7 @@ package com.stosik.kafka.producer.avro
 
 import com.sksamuel.avro4k.Avro
 import com.stosik.kafka.models.avro.TransactionCreatedAvroEvent
-import com.stosik.kafka.producer.asyncSend
+import com.stosik.kafka.models.producer.asyncSend
 import io.confluent.kafka.serializers.KafkaAvroSerializer
 import org.apache.avro.generic.GenericRecord
 import org.apache.kafka.clients.admin.AdminClientConfig.SECURITY_PROTOCOL_CONFIG

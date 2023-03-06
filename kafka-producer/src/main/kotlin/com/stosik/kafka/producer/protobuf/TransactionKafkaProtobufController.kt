@@ -1,6 +1,6 @@
 package com.stosik.kafka.producer.protobuf
 
-import com.stosik.kafka.producer.asyncSend
+import com.stosik.kafka.models.producer.asyncSend
 import io.confluent.kafka.serializers.protobuf.KafkaProtobufSerializer
 import org.apache.kafka.clients.admin.AdminClientConfig.SECURITY_PROTOCOL_CONFIG
 import org.apache.kafka.clients.producer.KafkaProducer

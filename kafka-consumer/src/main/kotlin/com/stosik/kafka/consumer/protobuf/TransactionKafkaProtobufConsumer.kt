@@ -20,11 +20,9 @@ internal class TransactionKafkaProtobufConsumer(
     private val consumer = kafkaConsumer<String, TransactionCreatedEvent> {
         configuration {
             bootstrapServers = listOf("http://localhost:9092")
-            autoOffsetReset = "earliest"
             keyDeserializer = StringDeserializer::class.java
             valueDeserializer = KafkaProtobufDeserializer::class.java
             groupId = "tms-dashboard-api-proto"
-            securityProtocol = "PLAINTEXT"
             schemaRegistryUrl = schemaRegistry
             protobufClass = TransactionCreatedEvent::class.java
         }

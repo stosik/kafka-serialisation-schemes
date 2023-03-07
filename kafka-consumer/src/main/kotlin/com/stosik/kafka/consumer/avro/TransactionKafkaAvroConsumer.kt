@@ -20,11 +20,9 @@ internal class TransactionKafkaAvroConsumer(
     private val consumer = kafkaConsumer<String, GenericRecord> {
         configuration {
             bootstrapServers = listOf("http://localhost:9092")
-            autoOffsetReset = "earliest"
             keyDeserializer = StringDeserializer::class.java
             valueDeserializer = KafkaAvroDeserializer::class.java
             groupId = "tms-dashboard-api-avro"
-            securityProtocol = "PLAINTEXT"
             schemaRegistryUrl = schemaRegistry
         }
         topics {

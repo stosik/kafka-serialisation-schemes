@@ -14,11 +14,9 @@ internal class TransactionKafkaJsonConsumer(private val objectMapper: ObjectMapp
     private val consumer = kafkaConsumer<String, String> {
         configuration {
             bootstrapServers = listOf("http://localhost:9092")
-            autoOffsetReset = "earliest"
             keyDeserializer = StringDeserializer::class.java
             valueDeserializer = StringDeserializer::class.java
             groupId = "tms-dashboard-api-json"
-            securityProtocol = "PLAINTEXT"
         }
         topics {
             topic(TRANSACTION_CREATED_TOPIC)
